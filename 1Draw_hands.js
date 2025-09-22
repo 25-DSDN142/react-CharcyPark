@@ -17,7 +17,8 @@ function drawInteraction(faces, hands) {
     // This is how to load in the x and y of a point on the hand.
     let indexFingerTipX = hand.index_finger_tip.x;
     let indexFingerTipY = hand.index_finger_tip.y;
-
+    let thumbFingerTipX = hand.thumb_tip.x;
+    let thumbFingerTipY = hand.thumb_tip.y;
     //  let pinkyFingerTipX = hand.pinky_finger_tip.x;
     //  let pinkyFingerTipY = hand.pinky_finger_tip.y;
 
@@ -26,13 +27,14 @@ function drawInteraction(faces, hands) {
     */
 
     fill(225, 225, 0);
-    ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
-
-    // drawPoints(hand)
+    ellipse(thumbFingerTipX, thumbFingerTipY , 30, 30);
+    drawFire(indexFingerTipX,indexFingerTipY,50)
+    // drawFire(thumbFingerTipX,thumbFingerTipY,50)
+    //drawPoints(hand)
 
     //fingerPuppet(indexFingerTipX, indexFingerTipY);
 
-    //chameleonHandPuppet(hand)
+    chameleonHandPuppet(hand)
 
     /*
     Stop drawing on the hands here
@@ -92,15 +94,16 @@ function chameleonHandPuppet(hand) {
   let pinch = dist(finger.x, finger.y, thumb.x, thumb.y);
 
   // This circle's size is controlled by a "pinch" gesture
-  fill(0, 255, 0, 200);
-  stroke(0);
-  strokeWeight(2);
-  circle(centerX, centerY, pinch);
+  // fill(0, 255, 0, 200);
+  // stroke(0);
+  // strokeWeight(2);
+  // circle(centerX, centerY, pinch);
+  
 
   let indexFingerTipX = hand.index_finger_tip.x;
   let indexFingerTipY = hand.index_finger_tip.y;
-  fill(0)
-  circle(indexFingerTipX, indexFingerTipY, 20);
+  // fill(0)
+  // circle(indexFingerTipX, indexFingerTipY, 20);
 
 }
 
@@ -130,5 +133,54 @@ function drawPoints(feature) {
     circle(element.x, element.y, 10);
   }
   pop()
+
+}
+function drawFire(firePosx,firePosy,fireSize){
+
+  push()
+  translate(firePosx,firePosy)
+  noStroke()
+  fill(245, 237, 93)
+
+  beginShape()
+    vertex(0,0)
+    bezierVertex(-0.4*fireSize,0.1*fireSize,-0.2*fireSize,-0.2*fireSize,0,-0.5*fireSize)
+    bezierVertex(0.4*fireSize,0.1*fireSize,0.2*fireSize,0,0,0)
+  endShape()
+  fill(242, 150, 80,105)
+
+  beginShape()
+  vertex(0,0.1*fireSize)
+    quadraticVertex(-0.5*fireSize,0.1*fireSize,-0.4*fireSize,-0.35*fireSize)
+    quadraticVertex(-0.25*fireSize,-0.2*fireSize,0,-0.8*fireSize)
+    quadraticVertex(0.25*fireSize,-0.35*fireSize,0.3*fireSize,-0.45*fireSize)
+    quadraticVertex(0.3*fireSize,-0.1*fireSize,0.4*fireSize,-0.25*fireSize)
+    quadraticVertex(0.4*fireSize,0.1*fireSize,0,0.1*fireSize)
+  endShape()
+}
+function drawFlowers(flowerPosx,flowerPosy,flowerSize,petalNum){
+let flowerColor=[color(211, 148, 227,100),//pink
+  color(197, 177, 252,60),//purple
+  color(247, 123, 104,60),//red
+  color(238, 250, 170,60)//yellow
+]
+let t=(frameCount*0.002)%1
+let idx=floor(t*flowerColor.length)
+let nextIdx=(idx+1)%flowerColor.length
+let amt=(t*(flowerColor.length))%1
+let c=lerpColor(flowerColor[idx],flowerColor[nextIdx],amt)  
+push()
+
+translate(flowerPosx,flowerPosy)
+angleMode(DEGREES)
+stroke(c)
+fill(c)
+for(i=0;i<petalNum;i++){
+  ellipse(0,0,flowerSize,flowerSize/3)
+  rotate(360/petalNum)
+  ellipse(0,0,flowerSize/3,flowerSize/3)
+
+}
+pop()
 
 }
