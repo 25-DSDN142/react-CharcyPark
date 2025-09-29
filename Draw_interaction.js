@@ -1,4 +1,5 @@
 // ----=  HANDS  =----
+let bgImage
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
 }
@@ -17,15 +18,22 @@ function drawInteraction(faces, hands) {
       drawConnections(hand)
     }
     // console.log(hand);
-    let indexFingerTipX = hand.index_finger_tip.x;
-    let indexFingerTipY = hand.index_finger_tip.y;
+    // let indexFingerTipX = hand.index_finger_tip.x;
+    // let indexFingerTipY = hand.index_finger_tip.y;
+    let midx=CaptureWidth/2
+    let midy=CaptureHeight/2
+    let middleFingerMcpX = hand.middle_finger_mcp.x;
+    let middleFingerMcpY = hand.middle_finger_mcp.y;
+
     /*
     Start drawing on the hands here
     */
 
     // pinchCircle(hand)
-    fill(225, 225, 0);
-    ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
+    // fill(225, 225, 0);
+    // ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
+    // let testDist = dist(middleFingerMcpX, middleFingerMcpY, );
+    drawFire(midx,midy,map(dist(middleFingerMcpX,middleFingerMcpY,midx,midy),0,1000,50,300))
 
     /*
     Stop drawing on the hands here
@@ -61,11 +69,24 @@ function drawInteraction(faces, hands) {
     // fill(225, 225, 0);
     // ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
 
-    drawPoints(face.leftEye);
-    drawPoints(face.leftEyebrow);
-    drawPoints(face.lips);
-    drawPoints(face.rightEye);
-    drawPoints(face.rightEyebrow);
+    //drawPoints(face.leftEye);
+    // drawPoints(face.leftEyebrow);
+    // drawPoints(face.lips);
+    //drawPoints(face.rightEye);
+   // drawPoints(face.rightEyebrow);
+    let leftEyeCenterX = face.leftEye.centerX;
+    let leftEyeCenterY = face.leftEye.centerY;
+    let rightEyeCenterX = face.rightEye.centerX;
+    let rightEyeCenterY = face.rightEye.centerY;
+    let rightEyeHeight = face.rightEye.height;
+    let leftEyeHeight = face.leftEye.height; 
+    //left eye
+   drawFlowers(leftEyeCenterX,leftEyeCenterY,50,map(dist(leftEyeHeight,5,19,4,12)))
+    //right eye
+    drawFlowers(rightEyeCenterX,rightEyeCenterY,50,map(dist(rightEyeHeight,5,19,4,12)))
+    
+    //console.log(face.leftEye)
+
     /*
     Stop drawing on the face here
     */
@@ -125,5 +146,55 @@ function drawPoints(feature) {
     circle(element.x, element.y, 5);
   }
   pop()
+
+}
+function drawFire(firePosx,firePosy,fireSize){
+
+  push()
+  translate(firePosx,firePosy)
+  noStroke()
+  fill(245, 237, 93)
+
+  beginShape()
+    vertex(0,0)
+    bezierVertex(-0.4*fireSize,0.1*fireSize,-0.2*fireSize,-0.2*fireSize,0,-0.5*fireSize)
+    bezierVertex(0.4*fireSize,0.1*fireSize,0.2*fireSize,0,0,0)
+  endShape()
+  fill(242, 150, 80,105)
+
+  beginShape()
+  vertex(0,0.1*fireSize)
+    quadraticVertex(-0.5*fireSize,0.1*fireSize,-0.4*fireSize,-0.35*fireSize)
+    quadraticVertex(-0.25*fireSize,-0.2*fireSize,0,-0.8*fireSize)
+    quadraticVertex(0.25*fireSize,-0.35*fireSize,0.3*fireSize,-0.45*fireSize)
+    quadraticVertex(0.3*fireSize,-0.1*fireSize,0.4*fireSize,-0.25*fireSize)
+    quadraticVertex(0.4*fireSize,0.1*fireSize,0,0.1*fireSize)
+  endShape()
+  
+  pop();
+}
+function drawFlowers(flowerPosx,flowerPosy,flowerSize,petalNum){
+let flowerColor=[color(211, 148, 227,100),//pink
+  color(197, 177, 252,60),//purple
+  color(247, 123, 104,60),//red
+  color(238, 250, 170,60)//yellow
+]
+
+let randomColor=random(flowerColor) 
+
+
+push()
+
+translate(flowerPosx,flowerPosy)
+angleMode(DEGREES)
+stroke(randomColor)
+fill(randomColor)
+for(i=0;i<petalNum;i++){
+  ellipse(0,0,flowerSize,flowerSize/3)
+  rotate(360/petalNum)
+  ellipse(0,0,flowerSize/3,flowerSize/3)
+
+}
+pop()
 
 }

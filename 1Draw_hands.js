@@ -158,29 +158,3 @@ function drawFire(firePosx,firePosy,fireSize){
     quadraticVertex(0.4*fireSize,0.1*fireSize,0,0.1*fireSize)
   endShape()
 }
-function drawFlowers(flowerPosx,flowerPosy,flowerSize,petalNum){
-let flowerColor=[color(211, 148, 227,100),//pink
-  color(197, 177, 252,60),//purple
-  color(247, 123, 104,60),//red
-  color(238, 250, 170,60)//yellow
-]
-let t=(frameCount*0.002)%1
-let idx=floor(t*flowerColor.length)
-let nextIdx=(idx+1)%flowerColor.length
-let amt=(t*(flowerColor.length))%1
-let c=lerpColor(flowerColor[idx],flowerColor[nextIdx],amt)  
-push()
-
-translate(flowerPosx,flowerPosy)
-angleMode(DEGREES)
-stroke(c)
-fill(c)
-for(i=0;i<petalNum;i++){
-  ellipse(0,0,flowerSize,flowerSize/3)
-  rotate(360/petalNum)
-  ellipse(0,0,flowerSize/3,flowerSize/3)
-
-}
-pop()
-
-}
