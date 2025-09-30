@@ -24,7 +24,7 @@ function drawInteraction(faces, hands) {
     let midy=CaptureHeight/2
     let middleFingerMcpX = hand.middle_finger_mcp.x;
     let middleFingerMcpY = hand.middle_finger_mcp.y;
-
+ 
     /*
     Start drawing on the hands here
     */
@@ -35,6 +35,7 @@ function drawInteraction(faces, hands) {
     // let testDist = dist(middleFingerMcpX, middleFingerMcpY, );
     drawFire(midx,midy,map(dist(middleFingerMcpX,middleFingerMcpY,midx,midy),0,1000,50,300))
 
+   
     /*
     Stop drawing on the hands here
     */
@@ -65,26 +66,26 @@ function drawInteraction(faces, hands) {
     /*
     Start drawing on the face here
     */
-
-    // fill(225, 225, 0);
-    // ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
-
-    //drawPoints(face.leftEye);
-    // drawPoints(face.leftEyebrow);
-    // drawPoints(face.lips);
-    //drawPoints(face.rightEye);
-   // drawPoints(face.rightEyebrow);
-    let leftEyeCenterX = face.leftEye.centerX;
+   let leftEyeCenterX = face.leftEye.centerX;
     let leftEyeCenterY = face.leftEye.centerY;
     let rightEyeCenterX = face.rightEye.centerX;
     let rightEyeCenterY = face.rightEye.centerY;
     let rightEyeHeight = face.rightEye.height;
     let leftEyeHeight = face.leftEye.height; 
+    // fill(225, 225, 0);
+    // ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
+  
     //left eye
-   drawFlowers(leftEyeCenterX,leftEyeCenterY,50,map(dist(leftEyeHeight,5,19,4,12)))
+   drawFlowers(leftEyeCenterX,leftEyeCenterY,50,map(leftEyeHeight,5,19,4,12))
     //right eye
-    drawFlowers(rightEyeCenterX,rightEyeCenterY,50,map(dist(rightEyeHeight,5,19,4,12)))
+    drawFlowers(rightEyeCenterX,rightEyeCenterY,50,map(rightEyeHeight,5,19,4,12))
     
+    //drawPoints(face.leftEye);
+    // drawPoints(face.leftEyebrow);
+    // drawPoints(face.lips);
+    //drawPoints(face.rightEye);
+   // drawPoints(face.rightEyebrow);
+  
     //console.log(face.leftEye)
 
     /*
