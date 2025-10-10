@@ -28,13 +28,16 @@ function drawInteraction(faces, hands) {
     /*
     Start drawing on the hands here
     */
+    let whatGesture = detectHandGesture(hand)
 
-    // pinchCircle(hand)
+    //pinchCircle(hand)
     // fill(225, 225, 0);
     // ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
     // let testDist = dist(middleFingerMcpX, middleFingerMcpY, );
-    drawFire(midx,midy,map(dist(middleFingerMcpX,middleFingerMcpY,midx,midy),0,1000,50,300))
-
+    
+    if (whatGesture == "Thumbs Up"){
+    drawFire(midx,midy,map(dist(middleFingerMcpX,middleFingerMcpY,midx,midy),0,1000,50,300),color(242, 150, 80,150),color(245, 237, 93))
+    }
    
     /*
     Stop drawing on the hands here
@@ -149,19 +152,19 @@ function drawPoints(feature) {
   pop()
 
 }
-function drawFire(firePosx,firePosy,fireSize){
+function drawFire(firePosx,firePosy,fireSize,outsideColor,insideColor){
 
   push()
   translate(firePosx,firePosy)
   noStroke()
-  fill(245, 237, 93)
+  fill(insideColor)//inside
 
   beginShape()
     vertex(0,0)
     bezierVertex(-0.4*fireSize,0.1*fireSize,-0.2*fireSize,-0.2*fireSize,0,-0.5*fireSize)
     bezierVertex(0.4*fireSize,0.1*fireSize,0.2*fireSize,0,0,0)
   endShape()
-  fill(242, 150, 80,105)
+  fill(outsideColor)//outside
 
   beginShape()
   vertex(0,0.1*fireSize)
