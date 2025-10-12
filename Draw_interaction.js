@@ -13,7 +13,10 @@ function drawInteraction(faces, hands) {
 let LH=hands.find(hand=>hand.handedness==="Left");
 let RH=hands.find(hand=>hand.handedness==="Right");
 let L_indexFingerTipX, L_indexFingerTipY, L_indexPinkyTipX, L_indexPinkyTipY;
+let L_middleFingerMcpX,L_middleFingerMcpY,L_indexFingerMcpX,L_indexFingerMcpY,L_ringFingerMcpX,L_ringFingerMcpY;
 let R_indexFingerTipX, R_indexFingerTipY, R_indexPinkyTipX, R_indexPinkyTipY;
+let R_middleFingerMcpX,R_middleFingerMcpY,R_indexFingerMcpX,R_indexFingerMcpY,R_ringFingerMcpX,R_ringFingerMcpY;
+
 
 //set up left hand variables
 if(LH){
@@ -23,6 +26,12 @@ if(LH){
   L_indexPinkyTipY=LH.pinky_finger_tip.y
   L_indexMiddleTipX=LH.middle_finger_tip.x
   L_indexMiddleTipY=LH.middle_finger_tip.y
+  L_middleFingerMcpX = LH.middle_finger_mcp.x;
+  L_middleFingerMcpY = LH.middle_finger_mcp.y;
+  L_indexFingerMcpX = LH.index_finger_mcp.x;
+  L_indexFingerMcpY = LH.index_finger_mcp.y;
+  L_ringFingerMcpX = LH.ring_finger_mcp.x;
+  L_ringFingerMcpY = LH.ring_finger_mcp.y;
 }
 //set up right hand variables
 if(RH){
@@ -32,14 +41,23 @@ if(RH){
   R_indexPinkyTipY=RH.pinky_finger_tip.y
   R_indexMiddleTipX=RH.middle_finger_tip.x
   R_indexMiddleTipY=RH.middle_finger_tip.y
+  R_middleFingerMcpX = RH.middle_finger_mcp.x;
+  R_middleFingerMcpY = RH.middle_finger_mcp.y;
+  R_indexFingerMcpX = RH.index_finger_mcp.x;
+  R_indexFingerMcpY = RH.index_finger_mcp.y;
+  R_ringFingerMcpX = RH.ring_finger_mcp.x;
+  R_ringFingerMcpY = RH.ring_finger_mcp.y;
 }
-if(LH&&RH){
+
+if(LH && RH){
   let indexTouch=areTheseTouching(L_indexMiddleTipX,L_indexMiddleTipY,R_indexMiddleTipX,R_indexMiddleTipY,50)
   if (indexTouch){
-    
-
+    drawLightning(L_indexFingerMcpX,R_indexFingerMcpX,L_indexFingerMcpY,220, random(0,80), 90)
+    drawLightning(L_middleFingerMcpX,R_middleFingerMcpX,R_middleFingerMcpY,60, random(0,40), 100)
+    drawLightning(L_ringFingerMcpX,R_ringFingerMcpX,R_ringFingerMcpY,280, random(0,50), 90)
   }
-}
+
+}}
   // for loop to capture if there is more than one hand on the screen. This applies the same process to all hands.
   for (let i = 0; i < hands.length; i++) {
     let hand = hands[i];
@@ -130,7 +148,6 @@ if(LH&&RH){
   // You can make addtional elements here, but keep the face drawing inside the for loop. 
 
 
-}
 
 
 function drawConnections(hand) {
@@ -241,4 +258,19 @@ function drawRains(){
         let y = random(midy*2);
         line(x, y, x + 5, y + 15);
             }
+}
+function drawLightning(LX,RX,yBase, hue, sat, bri){
+  push();
+  colorMode(HSB);
+  noFill()
+  stroke(hue, sat, bri);
+  strokeWeight(random(0.8,8));
+
+  beginShape();
+  for (let x = LX; x <= RX; x += 10) {
+    let y = yBase + sin(x * random(0.3,0.5) + frameCount * 0.02)*random(1,20);
+    vertex(x, y);
+  }
+  endShape();
+  pop();
 }
