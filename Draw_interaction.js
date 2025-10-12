@@ -1,5 +1,6 @@
 // ----=  HANDS  =----
 let bgImage
+
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
 }
@@ -9,7 +10,36 @@ function drawInteraction(faces, hands) {
   // hands part
   // USING THE GESTURE DETECTORS (check their values in the debug menu)
   // detectHandGesture(hand) returns "Pinch", "Peace", "Thumbs Up", "Pointing", "Open Palm", or "Fist"
+let LH=hands.find(hand=>hand.handedness==="Left");
+let RH=hands.find(hand=>hand.handedness==="Right");
+let L_indexFingerTipX, L_indexFingerTipY, L_indexPinkyTipX, L_indexPinkyTipY;
+let R_indexFingerTipX, R_indexFingerTipY, R_indexPinkyTipX, R_indexPinkyTipY;
 
+//set up left hand variables
+if(LH){
+  L_indexFingerTipX=LH.index_finger_tip.x
+  L_indexFingerTipY=LH.index_finger_tip.y
+  L_indexPinkyTipX=LH.pinky_finger_tip.x
+  L_indexPinkyTipY=LH.pinky_finger_tip.y
+  L_indexMiddleTipX=LH.middle_finger_tip.x
+  L_indexMiddleTipY=LH.middle_finger_tip.y
+}
+//set up right hand variables
+if(RH){
+  R_indexFingerTipX=RH.index_finger_tip.x
+  R_indexFingerTipY=RH.index_finger_tip.y
+  R_indexPinkyTipX=RH.pinky_finger_tip.x
+  R_indexPinkyTipY=RH.pinky_finger_tip.y
+  R_indexMiddleTipX=RH.middle_finger_tip.x
+  R_indexMiddleTipY=RH.middle_finger_tip.y
+}
+if(LH&&RH){
+  let indexTouch=areTheseTouching(L_indexMiddleTipX,L_indexMiddleTipY,R_indexMiddleTipX,R_indexMiddleTipY,50)
+  if (indexTouch){
+    
+
+  }
+}
   // for loop to capture if there is more than one hand on the screen. This applies the same process to all hands.
   for (let i = 0; i < hands.length; i++) {
     let hand = hands[i];
@@ -35,7 +65,7 @@ function drawInteraction(faces, hands) {
     // ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
     // let testDist = dist(middleFingerMcpX, middleFingerMcpY, );
     
-    if (whatGesture == "Thumbs Up"){
+    if (whatGesture == "Pinch"){
     drawFire(midx,midy,map(dist(middleFingerMcpX,middleFingerMcpY,midx,midy),0,1000,50,300),color(242, 150, 80,150),color(245, 237, 93))
     }
    
@@ -201,4 +231,14 @@ for(i=0;i<petalNum;i++){
 }
 pop()
 
+}
+function drawRains(){
+  stroke(180, 220, 255, 100); 
+  strokeWeight(2);
+  
+  for (let i = 0; i < rainCount; i++) {
+        let x = random(midx*2);
+        let y = random(midy*2);
+        line(x, y, x + 5, y + 15);
+            }
 }
