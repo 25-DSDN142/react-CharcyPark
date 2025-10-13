@@ -18,7 +18,28 @@ let R_indexFingerTipX, R_indexFingerTipY, R_indexPinkyTipX, R_indexPinkyTipY;
 let R_middleFingerMcpX,R_middleFingerMcpY,R_indexFingerMcpX,R_indexFingerMcpY,R_ringFingerMcpX,R_ringFingerMcpY;
 
 
-//set up left hand variables
+
+
+
+  // for loop to capture if there is more than one hand on the screen. This applies the same process to all hands.
+  for (let i = 0; i < hands.length; i++) {
+    let hand = hands[i];
+    if (showKeypoints) {
+      drawPoints(hand)
+      drawConnections(hand)
+    }
+    // console.log(hand);
+    // let indexFingerTipX = hand.index_finger_tip.x;
+    // let indexFingerTipY = hand.index_finger_tip.y;
+    let midx=CaptureWidth/2
+    let midy=CaptureHeight/2
+    let middleFingerMcpX = hand.middle_finger_mcp.x;
+    let middleFingerMcpY = hand.middle_finger_mcp.y;
+ 
+    /*
+    Start drawing on the hands here
+    */
+   //set up left hand variables
 if(LH){
   L_indexFingerTipX=LH.index_finger_tip.x
   L_indexFingerTipY=LH.index_finger_tip.y
@@ -48,44 +69,42 @@ if(RH){
   R_ringFingerMcpX = RH.ring_finger_mcp.x;
   R_ringFingerMcpY = RH.ring_finger_mcp.y;
 }
-
-if(LH && RH){
+   let whatGesture = detectHandGesture(hand)
+   let fireSize=map(dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY),0,1000,50,800)
+   let handMidX=L_middleFingerMcpX+dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY)/2
+  if(LH && RH){
   let indexTouch=areTheseTouching(L_indexMiddleTipX,L_indexMiddleTipY,R_indexMiddleTipX,R_indexMiddleTipY,50)
   if (indexTouch){
     drawLightning(L_indexFingerMcpX,R_indexFingerMcpX,L_indexFingerMcpY,220, random(0,80), 90)
     drawLightning(L_middleFingerMcpX,R_middleFingerMcpX,R_middleFingerMcpY,60, random(0,40), 100)
     drawLightning(L_ringFingerMcpX,R_ringFingerMcpX,R_ringFingerMcpY,280, random(0,50), 90)
   }
+  
+ else if (whatGesture == "Fist"){
 
+  drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(140, 171, 245,100),color(85, 134, 250,100))
+  }
+  else{
+  push()
+  colorMode(HSB)
+  let h = map(fireSize, 50, 800, 50, 10);  
+  let s = map(fireSize, 50, 800, 80, 100);  
+  let b = map(fireSize, 50, 800, 100, 70);  
+  let outsideColor = color(h-5, s, b, 0.6);
+  let insideColor = color(h+5, s - 20, b + 20, 0.8);
+  drawFire(handMidX,R_middleFingerMcpY+100,fireSize,outsideColor,insideColor)   
+  pop()  
+}
 }}
-  // for loop to capture if there is more than one hand on the screen. This applies the same process to all hands.
-  for (let i = 0; i < hands.length; i++) {
-    let hand = hands[i];
-    if (showKeypoints) {
-      drawPoints(hand)
-      drawConnections(hand)
-    }
-    // console.log(hand);
-    // let indexFingerTipX = hand.index_finger_tip.x;
-    // let indexFingerTipY = hand.index_finger_tip.y;
-    let midx=CaptureWidth/2
-    let midy=CaptureHeight/2
-    let middleFingerMcpX = hand.middle_finger_mcp.x;
-    let middleFingerMcpY = hand.middle_finger_mcp.y;
  
-    /*
-    Start drawing on the hands here
-    */
-    let whatGesture = detectHandGesture(hand)
+
 
     //pinchCircle(hand)
     // fill(225, 225, 0);
     // ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
     // let testDist = dist(middleFingerMcpX, middleFingerMcpY, );
     
-    if (whatGesture == "Pinch"){
-    drawFire(midx,midy,map(dist(middleFingerMcpX,middleFingerMcpY,midx,midy),0,1000,50,300),color(242, 150, 80,150),color(245, 237, 93))
-    }
+    
    
     /*
     Stop drawing on the hands here
@@ -102,7 +121,7 @@ if(LH && RH){
     if (showKeypoints) {
       drawPoints(face)
     }
-    // console.log(face);
+    console.log(face);
     /*
     Once this program has a face, it knows some things about it.
     This includes how to draw a box around the face, and an oval. 
@@ -199,30 +218,46 @@ function drawPoints(feature) {
   pop()
 
 }
-function drawFire(firePosx,firePosy,fireSize,outsideColor,insideColor){
+function drawFire(firePosx, firePosy, fireSize, outsideColor, insideColor) {
+  push();
+  translate(firePosx, firePosy);
+  noStroke();
+  colorMode(HSB);
 
-  push()
-  translate(firePosx,firePosy)
-  noStroke()
-  fill(insideColor)//inside
+  let flickerX = sin(frameCount * 0.15 + random(0.5)) * map(fireSize, 50, 800, 2, 15);
+  let flickerY = noise(frameCount * 0.05) * map(fireSize, 50, 800, 1, 10);
 
-  beginShape()
-    vertex(0,0)
-    bezierVertex(-0.4*fireSize,0.1*fireSize,-0.2*fireSize,-0.2*fireSize,0,-0.5*fireSize)
-    bezierVertex(0.4*fireSize,0.1*fireSize,0.2*fireSize,0,0,0)
-  endShape()
-  fill(outsideColor)//outside
-
-  beginShape()
-  vertex(0,0.1*fireSize)
-    quadraticVertex(-0.5*fireSize,0.1*fireSize,-0.4*fireSize,-0.35*fireSize)
-    quadraticVertex(-0.25*fireSize,-0.2*fireSize,0,-0.8*fireSize)
-    quadraticVertex(0.25*fireSize,-0.35*fireSize,0.3*fireSize,-0.45*fireSize)
-    quadraticVertex(0.3*fireSize,-0.1*fireSize,0.4*fireSize,-0.25*fireSize)
-    quadraticVertex(0.4*fireSize,0.1*fireSize,0,0.1*fireSize)
-  endShape()
   
+  let wave = sin(frameCount * 0.3 + random(5)) * 0.1;
+
+  translate(flickerX, flickerY);
+  beginShape();
+  fill(insideColor);
+  vertex(0, 0);
+  bezierVertex(
+    -0.4 * fireSize * (1 + wave), 0.1 * fireSize,
+    -0.2 * fireSize, -0.2 * fireSize * (1 + wave),
+    0, -0.5 * fireSize * (1 + wave)
+  );
+  bezierVertex(
+    0.4 * fireSize * (1 + wave), 0.1 * fireSize,
+    0.2 * fireSize, 0,
+    0, 0
+  );
+  endShape();
+
+  fill(outsideColor);
+  beginShape();
+  vertex(0, 0.1 * fireSize);
+  quadraticVertex(-0.5 * fireSize, 0.1 * fireSize, -0.4 * fireSize, -0.35 * fireSize * (1 + wave));
+  quadraticVertex(-0.25 * fireSize, -0.2 * fireSize, 0, -0.8 * fireSize * (1 + wave));
+  quadraticVertex(0.25 * fireSize, -0.35 * fireSize, 0.3 * fireSize, -0.45 * fireSize * (1 + wave));
+  quadraticVertex(0.3 * fireSize, -0.1 * fireSize, 0.4 * fireSize, -0.25 * fireSize);
+  quadraticVertex(0.4 * fireSize, 0.1 * fireSize, 0, 0.1 * fireSize);
+  endShape();
+
   pop();
+
 }
 function drawFlowers(flowerPosx,flowerPosy,flowerSize,petalNum){
 let flowerColor=[color(211, 148, 227,100),//pink
@@ -273,4 +308,41 @@ function drawLightning(LX,RX,yBase, hue, sat, bri){
   }
   endShape();
   pop();
+}
+function areTheseTouching(x1, y1, x2, y2, threshhold) {
+
+  let d = dist(x1, y1, x2, y2)
+  if (d < threshhold) {
+    return true;
+
+  } else {
+    return false;
+  }
+}
+function drawConnections(hand) {
+  // Draw the skeletal connections
+  push()
+  for (let j = 0; j < connections.length; j++) {
+    let pointAIndex = connections[j][0];
+    let pointBIndex = connections[j][1];
+    let pointA = hand.keypoints[pointAIndex];
+    let pointB = hand.keypoints[pointBIndex];
+    stroke(255, 0, 0);
+    strokeWeight(2);
+    line(pointA.x, pointA.y, pointB.x, pointB.y);
+  }
+  pop()
+}
+// This function draw's a dot on all the keypoints. It can be passed a whole face, or part of one. 
+function drawPoints(feature) {
+
+  push()
+  for (let i = 0; i < feature.keypoints.length; i++) {
+    let element = feature.keypoints[i];
+    noStroke();
+    fill(0, 255, 0);
+    circle(element.x, element.y, 5);
+  }
+  pop()
+
 }
