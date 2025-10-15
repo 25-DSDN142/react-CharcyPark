@@ -1,5 +1,6 @@
 // ----=  HANDS  =----
 let bgImage
+let fireSize
 
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
@@ -12,14 +13,10 @@ function drawInteraction(faces, hands) {
   // detectHandGesture(hand) returns "Pinch", "Peace", "Thumbs Up", "Pointing", "Open Palm", or "Fist"
 let LH=hands.find(hand=>hand.handedness==="Left");
 let RH=hands.find(hand=>hand.handedness==="Right");
-let L_indexFingerTipX, L_indexFingerTipY, L_indexPinkyTipX, L_indexPinkyTipY;
+let L_indexFingerTipX, L_indexFingerTipY, L_pinkyTipX, L_pinkyTipY,L_ringFingerTipX,L_ringFingerTipY,L_middleFingerTipX,L_middleFingerTipY,L_thumbTipX,L_thumbTipY;
 let L_middleFingerMcpX,L_middleFingerMcpY,L_indexFingerMcpX,L_indexFingerMcpY,L_ringFingerMcpX,L_ringFingerMcpY;
-let R_indexFingerTipX, R_indexFingerTipY, R_indexPinkyTipX, R_indexPinkyTipY;
+let R_indexFingerTipX, R_indexFingerTipY, R_pinkyTipX, R_pinkyTipY,R_ringFingerTipX,R_ringFingerTipY,R_middleFingerTipX,R_middleFingerTipY,R_thumbTipX,R_thumbTipY;
 let R_middleFingerMcpX,R_middleFingerMcpY,R_indexFingerMcpX,R_indexFingerMcpY,R_ringFingerMcpX,R_ringFingerMcpY;
-
-
-
-
 
   // for loop to capture if there is more than one hand on the screen. This applies the same process to all hands.
   for (let i = 0; i < hands.length; i++) {
@@ -43,10 +40,14 @@ let R_middleFingerMcpX,R_middleFingerMcpY,R_indexFingerMcpX,R_indexFingerMcpY,R_
 if(LH){
   L_indexFingerTipX=LH.index_finger_tip.x
   L_indexFingerTipY=LH.index_finger_tip.y
-  L_indexPinkyTipX=LH.pinky_finger_tip.x
-  L_indexPinkyTipY=LH.pinky_finger_tip.y
-  L_indexMiddleTipX=LH.middle_finger_tip.x
-  L_indexMiddleTipY=LH.middle_finger_tip.y
+  L_ringFingerTipX = LH.ring_finger_tip.x;
+  L_ringFingerTipY = LH.ring_finger_tip.y;
+  L_pinkyTipX=LH.pinky_finger_tip.x
+  L_pinkyTipY=LH.pinky_finger_tip.y
+  L_thumbTipX=LH.thumb_tip.x
+  L_thumbTipY=LH.thumb_tip.y
+  L_middleFingerTipX=LH.middle_finger_tip.x
+  L_middleFingerTipY=LH.middle_finger_tip.y
   L_middleFingerMcpX = LH.middle_finger_mcp.x;
   L_middleFingerMcpY = LH.middle_finger_mcp.y;
   L_indexFingerMcpX = LH.index_finger_mcp.x;
@@ -58,10 +59,14 @@ if(LH){
 if(RH){
   R_indexFingerTipX=RH.index_finger_tip.x
   R_indexFingerTipY=RH.index_finger_tip.y
-  R_indexPinkyTipX=RH.pinky_finger_tip.x
-  R_indexPinkyTipY=RH.pinky_finger_tip.y
-  R_indexMiddleTipX=RH.middle_finger_tip.x
-  R_indexMiddleTipY=RH.middle_finger_tip.y
+  R_ringFingerTipX = RH.ring_finger_tip.x;
+  R_ringFingerTipY = RH.ring_finger_tip.y;
+  R_pinkyTipX=RH.pinky_finger_tip.x
+  R_pinkyTipY=RH.pinky_finger_tip.y
+  R_thumbTipX=RH.thumb_tip.x
+  R_thumbTipY=RH.thumb_tip.y
+  R_middleFingerTipX=RH.middle_finger_tip.x
+  R_middleFingerTipY=RH.middle_finger_tip.y
   R_middleFingerMcpX = RH.middle_finger_mcp.x;
   R_middleFingerMcpY = RH.middle_finger_mcp.y;
   R_indexFingerMcpX = RH.index_finger_mcp.x;
@@ -70,32 +75,59 @@ if(RH){
   R_ringFingerMcpY = RH.ring_finger_mcp.y;
 }
    let whatGesture = detectHandGesture(hand)
-   let fireSize=map(dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY),0,1000,50,800)
+   fireSize=map(dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY),0,1000,50,800)
    let handMidX=L_middleFingerMcpX+dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY)/2
+   let eyeOffset=0.5*fireSize
+   let eyeSize=fireSize*map(fireSize,50,800,0.1,0.2)
+   let fireEyePosX=handMidX-eyeOffset/2
+   let fireEyePosY=middleFingerMcpY-fireSize*0.2
+   let mouthSize=map(fireSize,50,800,10,100)
   if(LH && RH){
-  let indexTouch=areTheseTouching(L_indexMiddleTipX,L_indexMiddleTipY,R_indexMiddleTipX,R_indexMiddleTipY,50)
+  let indexTouch=areTheseTouching(L_middleFingerTipX,L_middleFingerTipY,R_middleFingerTipX,R_middleFingerTipY,50)
+  let thumbIndexTouchLeft=areTheseTouching(L_middleFingerTipX,L_middleFingerTipY,L_thumbTipX,L_thumbTipY)
+  let thumbIndexTouchRight=areTheseTouching(R_middleFingerTipX,R_middleFingerTipY,R_thumbTipX,R_thumbTipY)
   if (indexTouch){
     drawLightning(L_indexFingerMcpX,R_indexFingerMcpX,L_indexFingerMcpY,220, random(0,80), 90)
     drawLightning(L_middleFingerMcpX,R_middleFingerMcpX,R_middleFingerMcpY,60, random(0,40), 100)
     drawLightning(L_ringFingerMcpX,R_ringFingerMcpX,R_ringFingerMcpY,280, random(0,50), 90)
   }
-  
- else if (whatGesture == "Fist"){
-
-  drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(140, 171, 245,100),color(85, 134, 250,100))
+  else if(thumbIndexTouchLeft&&thumbIndexTouchRight){
+    drawLightning(L_indexFingerTipX,R_indexFingerTipX,L_indexFingerTipY,200, random(0,80), 90)
+    drawLightning(L_ringFingerTipX,R_ringFingerTipX,R_ringFingerTipY,190, random(0,40), 100)
+    drawLightning(L_pinkyTipX,R_pinkyTipX,R_pinkyTipY,180, random(0,50), 90)
   }
+  
+  else if (whatGesture == "Fist"){
+
+    drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(82, 180, 222,100),color(158, 209, 247,100))//blue
+  //fireEmo
+    drawFireEmo(4,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
+  }
+  else if (whatGesture=="Pinch"){
+    drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(116, 237, 97,100),color(118, 245, 7,100))//green
+    drawFireEmo(1,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
+    drawRains(1000)
+  }
+  else if (whatGesture=="Thumbs Up"){
+    drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(245, 86, 7,100),color(247, 243, 104,100))//red
+    drawFireEmo(2,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
+  }
+  else if (whatGesture=="Open Palm"){
+    drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(247, 104, 180,100),color(247, 114, 223,100))//red pink
+    drawFireEmo(3,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
+  }  
   else{
   push()
   colorMode(HSB)
   let h = map(fireSize, 50, 800, 50, 10);  
   let s = map(fireSize, 50, 800, 80, 100);  
   let b = map(fireSize, 50, 800, 100, 70);  
-  let outsideColor = color(h-5, s, b, 0.6);
-  let insideColor = color(h+5, s - 20, b + 20, 0.8);
+  let outsideColor = color(h-5, s, b,0.6);
+  let insideColor = color(h+5, s - 20, b + 20);
   drawFire(handMidX,R_middleFingerMcpY+100,fireSize,outsideColor,insideColor)   
   pop()  
-}
-}}
+ }
+ }}
  
 
 
@@ -109,7 +141,7 @@ if(RH){
     /*
     Stop drawing on the hands here
     */
-  }
+  
 
 
 
@@ -118,10 +150,11 @@ if(RH){
   // for loop to capture if there is more than one face on the screen. This applies the same process to all faces. 
   for (let i = 0; i < faces.length; i++) {
     let face = faces[i]; // face holds all the keypoints of the face
-    if (showKeypoints) {
+     console.log(face);
+     if (showKeypoints) {
       drawPoints(face)
     }
-    console.log(face);
+   
     /*
     Once this program has a face, it knows some things about it.
     This includes how to draw a box around the face, and an oval. 
@@ -136,7 +169,8 @@ if(RH){
     /*
     Start drawing on the face here
     */
-   let leftEyeCenterX = face.leftEye.centerX;
+    let lipsWidth = face.lips.width,lipsHeight = face.lips.height;
+    let leftEyeCenterX = face.leftEye.centerX;
     let leftEyeCenterY = face.leftEye.centerY;
     let rightEyeCenterX = face.rightEye.centerX;
     let rightEyeCenterY = face.rightEye.centerY;
@@ -146,7 +180,7 @@ if(RH){
     // ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
   
     //left eye
-   drawFlowers(leftEyeCenterX,leftEyeCenterY,50,map(leftEyeHeight,5,19,4,12))
+    drawFlowers(leftEyeCenterX,leftEyeCenterY,50,map(leftEyeHeight,5,19,4,12))
     //right eye
     drawFlowers(rightEyeCenterX,rightEyeCenterY,50,map(rightEyeHeight,5,19,4,12))
     
@@ -167,23 +201,7 @@ if(RH){
   // You can make addtional elements here, but keep the face drawing inside the for loop. 
 
 
-
-
-function drawConnections(hand) {
-  // Draw the skeletal connections
-  push()
-  for (let j = 0; j < connections.length; j++) {
-    let pointAIndex = connections[j][0];
-    let pointBIndex = connections[j][1];
-    let pointA = hand.keypoints[pointAIndex];
-    let pointB = hand.keypoints[pointBIndex];
-    stroke(255, 0, 0);
-    strokeWeight(2);
-    line(pointA.x, pointA.y, pointB.x, pointB.y);
-  }
-  pop()
 }
-
 function pinchCircle(hand) { // adapted from https://editor.p5js.org/ml5/sketches/DNbSiIYKB
   // Find the index finger tip and thumb tip
   let finger = hand.index_finger_tip;
@@ -203,44 +221,28 @@ function pinchCircle(hand) { // adapted from https://editor.p5js.org/ml5/sketche
   circle(centerX, centerY, pinch);
 
 }
-
-
-// This function draw's a dot on all the keypoints. It can be passed a whole face, or part of one. 
-function drawPoints(feature) {
-
-  push()
-  for (let i = 0; i < feature.keypoints.length; i++) {
-    let element = feature.keypoints[i];
-    noStroke();
-    fill(0, 255, 0);
-    circle(element.x, element.y, 5);
-  }
-  pop()
-
-}
 function drawFire(firePosx, firePosy, fireSize, outsideColor, insideColor) {
   push();
   translate(firePosx, firePosy);
   noStroke();
   colorMode(HSB);
-
-  let flickerX = sin(frameCount * 0.15 + random(0.5)) * map(fireSize, 50, 800, 2, 15);
-  let flickerY = noise(frameCount * 0.05) * map(fireSize, 50, 800, 1, 10);
-
-  
-  let wave = sin(frameCount * 0.3 + random(5)) * 0.1;
-
-  translate(flickerX, flickerY);
+  let t=millis()*0.003
+  let flickerX = sin(t*random(1.2,2.2)) * map(fireSize, 50, 800, 8, 40);
+  let flickerY = cos(t*random(1.5,2.8)) * map(fireSize, 50, 800, 5, 25);
+  let factorS = 1+sin(t*3+random(-0.3,0.3)) * 0.15
+  let flicker=random(-0.08,0.08)
+  translate(flickerX, flickerY)
+  scale(factorS+flicker)
   beginShape();
   fill(insideColor);
   vertex(0, 0);
   bezierVertex(
-    -0.4 * fireSize * (1 + wave), 0.1 * fireSize,
-    -0.2 * fireSize, -0.2 * fireSize * (1 + wave),
-    0, -0.5 * fireSize * (1 + wave)
+    -0.4 * fireSize, 0.1 * fireSize,
+    -0.2 * fireSize, -0.2 * fireSize,
+    0, -0.5 * fireSize
   );
   bezierVertex(
-    0.4 * fireSize * (1 + wave), 0.1 * fireSize,
+    0.4 * fireSize, 0.1 * fireSize,
     0.2 * fireSize, 0,
     0, 0
   );
@@ -249,9 +251,9 @@ function drawFire(firePosx, firePosy, fireSize, outsideColor, insideColor) {
   fill(outsideColor);
   beginShape();
   vertex(0, 0.1 * fireSize);
-  quadraticVertex(-0.5 * fireSize, 0.1 * fireSize, -0.4 * fireSize, -0.35 * fireSize * (1 + wave));
-  quadraticVertex(-0.25 * fireSize, -0.2 * fireSize, 0, -0.8 * fireSize * (1 + wave));
-  quadraticVertex(0.25 * fireSize, -0.35 * fireSize, 0.3 * fireSize, -0.45 * fireSize * (1 + wave));
+  quadraticVertex(-0.5 * fireSize, 0.1 * fireSize, -0.4 * fireSize, -0.35 * fireSize);
+  quadraticVertex(-0.25 * fireSize, -0.2 * fireSize, 0, -0.8 * fireSize);
+  quadraticVertex(0.25 * fireSize, -0.35 * fireSize, 0.3 * fireSize, -0.45 * fireSize);
   quadraticVertex(0.3 * fireSize, -0.1 * fireSize, 0.4 * fireSize, -0.25 * fireSize);
   quadraticVertex(0.4 * fireSize, 0.1 * fireSize, 0, 0.1 * fireSize);
   endShape();
@@ -284,10 +286,11 @@ for(i=0;i<petalNum;i++){
 pop()
 
 }
-function drawRains(){
+function drawRains(rainCount){
   stroke(180, 220, 255, 100); 
   strokeWeight(2);
-  
+ let midx=CaptureWidth/2
+ let midy=CaptureHeight/2
   for (let i = 0; i < rainCount; i++) {
         let x = random(midx*2);
         let y = random(midy*2);
@@ -344,5 +347,68 @@ function drawPoints(feature) {
     circle(element.x, element.y, 5);
   }
   pop()
+
+}
+function drawFireEmo(k,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize){
+  //surprise
+  if (k===0){
+  noStroke()
+  fill(0)  
+  ellipse(fireEyePosX,fireEyePosY,eyeSize,eyeSize*1.2)
+  ellipse(fireEyePosX+eyeOffset,fireEyePosY,eyeSize,eyeSize*1.2)
+  fill(255)
+  ellipse(fireEyePosX-eyeSize*0.15,fireEyePosY-eyeSize*0.15,eyeSize*0.3)
+  ellipse(fireEyePosX+eyeOffset-0.15*eyeSize,fireEyePosY-eyeSize*0.15,eyeSize*0.3)  
+  noFill()
+  stroke(237, 190, 142,120)
+  strokeWeight(0.8)
+  ellipse(fireEyePosX+eyeOffset/2,fireEyePosY+3*eyeSize,mouthSize)
+
+  }
+  //scared(close eyes), raining 
+  if(k===1){
+  noFill()
+  stroke(0)
+  strokeWeight(1.5)
+  //left eye
+  line(fireEyePosX-eyeOffset*0.1,fireEyePosY-eyeOffset*0.1,fireEyePosX+eyeOffset*0.1,fireEyePosY+eyeOffset*0.1)
+  line(fireEyePosX+eyeOffset*0.1,fireEyePosY+eyeOffset*0.1,fireEyePosX-eyeOffset*0.1,fireEyePosY+eyeOffset*0.1)
+  //right eye
+  line(fireEyePosX+0.9*eyeOffset,fireEyePosY-eyeOffset*0.1,fireEyePosX+eyeOffset*1.1,fireEyePosY+eyeOffset*0.1)
+  line(fireEyePosX+eyeOffset*1.1,fireEyePosY+eyeOffset*0.1,fireEyePosX+eyeOffset*0.9,fireEyePosY+eyeOffset*0.1)
+  //mouth
+
+  }
+
+
+  //shy
+  if(k===2){
+  noStroke()
+  fill(0)  
+  ellipse(fireEyePosX,fireEyePosY,eyeSize,eyeSize*1.2)
+  ellipse(fireEyePosX+eyeOffset,fireEyePosY,eyeSize,eyeSize*1.2)
+  stroke(235, 171, 211,120)
+  strokeWeight(2)
+  noFill()
+  beginShape()
+  vertex(fireEyePosX-2*eyeSize,fireEyePosY+8*eyeSize)
+  vertex(fireEyePosX-eyeSize,fireEyePosY+10*eyeSize)
+  vertex(fireEyePosX,fireEyePosY+8*eyeSize)
+  vertex(fireEyePosX+eyeSize,fireEyePosY+10*eyeSize)
+  vertex(fireEyePosX+2*eyeSize,fireEyePosY+8*eyeSize)
+  endShape()
+
+
+  }
+
+
+  //love, background hearts coming out
+  if(k===3){
+
+  }
+  //angry
+  if(k===4){
+
+  }
 
 }
