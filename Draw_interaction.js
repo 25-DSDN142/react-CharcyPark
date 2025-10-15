@@ -1,7 +1,11 @@
 // ----=  HANDS  =----
 let bgImage
 let fireSize
-
+let stars=[]
+let firstRun=true
+const numStars=300
+let midx=CaptureWidth/2
+let midy=CaptureHeight/2
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
 }
@@ -28,8 +32,7 @@ let R_middleFingerMcpX,R_middleFingerMcpY,R_indexFingerMcpX,R_indexFingerMcpY,R_
     // console.log(hand);
     // let indexFingerTipX = hand.index_finger_tip.x;
     // let indexFingerTipY = hand.index_finger_tip.y;
-    let midx=CaptureWidth/2
-    let midy=CaptureHeight/2
+   
     let middleFingerMcpX = hand.middle_finger_mcp.x;
     let middleFingerMcpY = hand.middle_finger_mcp.y;
  
@@ -77,8 +80,8 @@ if(RH){
    let whatGesture = detectHandGesture(hand)
    fireSize=map(dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY),0,1000,50,800)
    let handMidX=L_middleFingerMcpX+dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY)/2
-   let eyeOffset=0.5*fireSize
-   let eyeSize=fireSize*map(fireSize,50,800,0.1,0.2)
+   let eyeOffset=0.4*fireSize
+   let eyeSize=fireSize*map(fireSize,50,800,0.05,0.15)
    let fireEyePosX=handMidX-eyeOffset/2
    let fireEyePosY=middleFingerMcpY-fireSize*0.2
    let mouthSize=map(fireSize,50,800,10,100)
@@ -128,22 +131,11 @@ if(RH){
   pop()  
  }
  }}
- 
 
-
-    //pinchCircle(hand)
-    // fill(225, 225, 0);
-    // ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
-    // let testDist = dist(middleFingerMcpX, middleFingerMcpY, );
-    
-    
-   
     /*
     Stop drawing on the hands here
     */
   
-
-
 
   //------------------------------------------------------------
   //facePart
@@ -169,6 +161,7 @@ if(RH){
     /*
     Start drawing on the face here
     */
+
     let lipsWidth = face.lips.width,lipsHeight = face.lips.height;
     let leftEyeCenterX = face.leftEye.centerX;
     let leftEyeCenterY = face.leftEye.centerY;
@@ -178,12 +171,15 @@ if(RH){
     let leftEyeHeight = face.leftEye.height; 
     // fill(225, 225, 0);
     // ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
-  
+  console.log(lipsHeight)
     //left eye
     drawFlowers(leftEyeCenterX,leftEyeCenterY,50,map(leftEyeHeight,5,19,4,12))
     //right eye
     drawFlowers(rightEyeCenterX,rightEyeCenterY,50,map(rightEyeHeight,5,19,4,12))
-    
+    //background
+    if (lipsHeight>50){
+      drawBackStars(lipsHeight)
+    }
     //drawPoints(face.leftEye);
     // drawPoints(face.leftEyebrow);
     // drawPoints(face.lips);
@@ -289,8 +285,6 @@ pop()
 function drawRains(rainCount){
   stroke(180, 220, 255, 100); 
   strokeWeight(2);
- let midx=CaptureWidth/2
- let midy=CaptureHeight/2
   for (let i = 0; i < rainCount; i++) {
         let x = random(midx*2);
         let y = random(midy*2);
@@ -355,21 +349,18 @@ function drawFireEmo(k,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize){
   noStroke()
   fill(0)  
   ellipse(fireEyePosX,fireEyePosY,eyeSize,eyeSize*1.2)
-  ellipse(fireEyePosX+eyeOffset,fireEyePosY,eyeSize,eyeSize*1.2)
-  fill(255)
-  ellipse(fireEyePosX-eyeSize*0.15,fireEyePosY-eyeSize*0.15,eyeSize*0.3)
-  ellipse(fireEyePosX+eyeOffset-0.15*eyeSize,fireEyePosY-eyeSize*0.15,eyeSize*0.3)  
+  ellipse(fireEyePosX+eyeOffset,fireEyePosY,eyeSize,eyeSize*1.2) 
   noFill()
-  stroke(237, 190, 142,120)
+  stroke(0)
   strokeWeight(0.8)
-  ellipse(fireEyePosX+eyeOffset/2,fireEyePosY+3*eyeSize,mouthSize)
+  ellipse(fireEyePosX+eyeOffset/2,fireEyePosY+0.2*eyeSize,mouthSize,mouthSize)
 
   }
   //scared(close eyes), raining 
   if(k===1){
   noFill()
   stroke(0)
-  strokeWeight(1.5)
+  strokeWeight(2)
   //left eye
   line(fireEyePosX-eyeOffset*0.1,fireEyePosY-eyeOffset*0.1,fireEyePosX+eyeOffset*0.1,fireEyePosY+eyeOffset*0.1)
   line(fireEyePosX+eyeOffset*0.1,fireEyePosY+eyeOffset*0.1,fireEyePosX-eyeOffset*0.1,fireEyePosY+eyeOffset*0.1)
@@ -412,3 +403,39 @@ function drawFireEmo(k,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize){
   }
 
 }
+function drawBackStars(lipsHeight){
+  background(0,120)
+  //first run
+  if (firstRun){
+    for(let i=0;i<numStars;i++){
+      stars.push({
+        x:random(-midx,midx),
+        y:random(-midy,midy),
+        z:random(2*midx)
+      })
+    }
+    firstRun=false
+  }
+  translate(midx,midy)
+  let lerpAmt=map(lipsHeight,40,80,0,1)
+  for(let star of stars){
+  star.z -= 10;
+  if (star.z < 1) {
+  // Reset star to far away
+    star.x = random(-midx, midx);
+    star.y = random(-midy, midy);
+    star.z = midx*2;
+}
+  // Project 3D to 2D
+  let sx = star.x * (midx*2 / star.z);
+  let sy = star.y * (midx*2 / star.z);
+  let r = map(star.z, 0, midx*2, 8, 0.5); // Size based on depth
+  noStroke();
+  fill(255);
+  ellipse(sx, sy, r, r);
+}
+}
+  
+  
+
+
