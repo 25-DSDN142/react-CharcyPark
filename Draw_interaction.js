@@ -1,17 +1,27 @@
 // ----=  HANDS  =----
 let bgImage
 let fireSize
-let stars=[]
+let stars=[],hearts=[],fireworks=[],myColors=[]
 let firstRun=true
 const numStars=300
 let midx=CaptureWidth/2
 let midy=CaptureHeight/2
+let gravity=0.25
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
 }
 
 function drawInteraction(faces, hands) {
-
+  let c1=color(154,122,204,150)
+  let c2=color(204,122,131,131)
+  let c3=color(122,131,204,120)
+  let c4=color(151,209,145,180)
+  let c5=color(155,210,146,80)
+  let c6=color(220,209,131,160)
+  let c7=color(159,226,245,200)
+  let c8=color(122,131,204,180)
+  let c9=color(231,244,78,200)
+  myColors=[c1,c2,c3,c4,c5,c6,c7,c8,c9];
   // hands part
   // USING THE GESTURE DETECTORS (check their values in the debug menu)
   // detectHandGesture(hand) returns "Pinch", "Peace", "Thumbs Up", "Pointing", "Open Palm", or "Fist"
@@ -118,7 +128,10 @@ if(RH){
   else if (whatGesture=="Open Palm"){
     drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(247, 104, 180,100),color(247, 114, 223,100))//red pink
     drawFireEmo(3,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
-  }  
+  } 
+  else if (whatGesture=="Peace"){
+    drawFireworks()
+  } 
   else{
   push()
   colorMode(HSB)
@@ -434,6 +447,76 @@ function drawBackStars(lipsHeight){
   fill(255);
   ellipse(sx, sy, r, r);
 }
+}
+function drawBackHearts(){
+
+}
+function drawFireworks(){
+  if (random(1)<0.05&&fireworks.length<6){
+    fireworks.push({
+      x:random(midx*0.4,mid*1.6),
+      y:midy*2,
+      vy:random(-8,-12),
+      color:random(myColors),
+      exploded:false,
+      size:random(40,60),
+      particles:[]
+
+    })
+  }
+  for(let fw of fireworks){
+    if(!fw.exploded){
+      fw.y+=fw.vy
+      fw.vy+=gravity*0.5
+      drawFlyingFire(fw.x,fw.y,fw.color)
+    if(fw.vy>0||fw.y<350){
+      fw.exploaded=true
+      fw.particles=createHeartExplosion(fw.x,fw.y,fw.color)
+    }  
+    }else{
+      for(let p of fw.particles){
+        p.x+=p.vx
+        p.y+=p.vy
+        p.vy+=gravity*0.05
+        p.life-=4
+        noStroke()
+        fill(red(p.color),green(p.color),blue(p.color),p.life)
+        ellipse(p.x,p.y,p.size)
+      }
+      fw.particles=fw.particles.filter(p=>p.life>0)
+    }
+  }
+  fireworks=fireworks.filter(fw=>!fwparticles.length>0)
+}
+function drawFlyingFire(x,y,col){
+  push();
+  translate(x, y);
+  noStroke();
+  fill(col);
+  ellipse(0, 0, 6, 20);
+  fill(255, 180);
+  ellipse(0, 10, 4, 10);
+  pop();
+}
+function createHeartExplosion(x,y,col){
+  let particles = [];
+  let count = 120;
+  for (let i = 0; i < count; i++) {
+    let t = map(i, 0, count, 0, TWO_PI);
+    let heartX = 16 * pow(sin(t), 3);
+    let heartY = -(13 * cos(t) - 5 * cos(2*t) - 2 * cos(3*t) - cos(4*t));
+    let scale = random(3, 5);
+    particles.push({
+      x: x,
+      y: y,
+      vx: heartX * 0.3 * random(0.8, 1.2),
+      vy: heartY * 0.3 * random(0.8, 1.2),
+      size: random(2, 5),
+      color: col,
+      life: 255
+    })
+}
+return particles
 }
   
   
