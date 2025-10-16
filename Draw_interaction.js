@@ -7,6 +7,9 @@ const numStars=300
 let midx=CaptureWidth/2
 let midy=CaptureHeight/2
 let gravity=0.25
+let numHearts=300
+let firstRunHearts=true
+
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
 }
@@ -140,7 +143,9 @@ if(RH){
   let b = map(fireSize, 50, 800, 100, 70);  
   let outsideColor = color(h-5, s, b,0.6);
   let insideColor = color(h+5, s - 20, b + 20);
-  drawFire(handMidX,R_middleFingerMcpY+100,fireSize,outsideColor,insideColor)   
+  drawFire(handMidX,R_middleFingerMcpY+100,fireSize,outsideColor,insideColor)
+  drawFireEmo(0,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
+   
   pop()  
  }
  }}
@@ -174,31 +179,44 @@ if(RH){
     /*
     Start drawing on the face here
     */
-
-    let lipsWidth = face.lips.width,lipsHeight = face.lips.height;
     let leftEyeCenterX = face.leftEye.centerX;
     let leftEyeCenterY = face.leftEye.centerY;
     let rightEyeCenterX = face.rightEye.centerX;
     let rightEyeCenterY = face.rightEye.centerY;
+    let rotateAmount
+    let dy=leftEyeCenterY-rightEyeCenterY
+    let dx=leftEyeCenterX-rightEyeCenterX
+    let lipsHeight = face.lips.height;
     let rightEyeHeight = face.rightEye.height;
     let leftEyeHeight = face.leftEye.height; 
-    // fill(225, 225, 0);
-    // ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
-  console.log(lipsHeight)
+    let lipsWidth = face.lips.width;
+    let faceCenterX = face.faceOval.centerX;
+    let faceCenterY = face.faceOval.centerY;
+    let faceWidth = face.faceOval.width;
+  //console.log(lipsHeight)
+    //face central
+    drawFlowers(faceCenterX,faceCenterY,50,map(lipsWidth,145,190,5,10))
+    push()
+    angleMode(RADIANS)
+    rotateAmount=Math.atan2(dy,dx)
+    translate(faceCenterX,faceCenterY)
+    rotate(rotateAmount)
+    drawLines(0,0,faceWidth*0.8)
+    drawLines(0,0,-faceWidth*0.8)
+    pop()
     //left eye
-    drawFlowers(leftEyeCenterX,leftEyeCenterY,50,map(leftEyeHeight,5,19,4,12))
+    //drawFlowers(leftEyeCenterX,leftEyeCenterY,50,map(leftEyeHeight,5,19,4,12))
     //right eye
-    drawFlowers(rightEyeCenterX,rightEyeCenterY,50,map(rightEyeHeight,5,19,4,12))
+    //drawFlowers(rightEyeCenterX,rightEyeCenterY,50,map(rightEyeHeight,5,19,4,12))
     //background
     if (lipsHeight>50){
       drawBackStars(lipsHeight)
     }
-    //drawPoints(face.leftEye);
-    // drawPoints(face.leftEyebrow);
-    // drawPoints(face.lips);
-    //drawPoints(face.rightEye);
-   // drawPoints(face.rightEyebrow);
-  
+    if(leftEyeHeight<20||rightEyeHeight<20){
+          drawBackHearts(lipsWidth)
+
+    }
+   
     //console.log(face.leftEye)
 
     /*
@@ -359,64 +377,123 @@ function drawPoints(feature) {
 function drawFireEmo(k,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize){
   //surprise
   if (k===0){
+  push()
   noStroke()
   fill(0)  
   ellipse(fireEyePosX,fireEyePosY,eyeSize,eyeSize*1.2)
   ellipse(fireEyePosX+eyeOffset,fireEyePosY,eyeSize,eyeSize*1.2) 
   noFill()
   stroke(0)
-  strokeWeight(0.8)
-  ellipse(fireEyePosX+eyeOffset/2,fireEyePosY+0.2*eyeSize,mouthSize,mouthSize)
-
+  strokeWeight(4)
+  ellipse(fireEyePosX+eyeOffset/2,fireEyePosY+0.5*eyeOffset,mouthSize,mouthSize/2)
+  pop()
   }
   //scared(close eyes), raining 
   if(k===1){
+  push()  
   noFill()
   stroke(0)
-  strokeWeight(2)
+  strokeWeight(4)
   //left eye
-  line(fireEyePosX-eyeOffset*0.1,fireEyePosY-eyeOffset*0.1,fireEyePosX+eyeOffset*0.1,fireEyePosY+eyeOffset*0.1)
-  line(fireEyePosX+eyeOffset*0.1,fireEyePosY+eyeOffset*0.1,fireEyePosX-eyeOffset*0.1,fireEyePosY+eyeOffset*0.1)
+  line(fireEyePosX-eyeOffset*0.1,fireEyePosY,fireEyePosX+eyeOffset*0.1,fireEyePosY+eyeOffset*0.2)
+  line(fireEyePosX+eyeOffset*0.1,fireEyePosY+eyeOffset*0.2,fireEyePosX-eyeOffset*0.1,fireEyePosY+eyeOffset*0.3)
   //right eye
-  line(fireEyePosX+0.9*eyeOffset,fireEyePosY-eyeOffset*0.1,fireEyePosX+eyeOffset*1.1,fireEyePosY+eyeOffset*0.1)
-  line(fireEyePosX+eyeOffset*1.1,fireEyePosY+eyeOffset*0.1,fireEyePosX+eyeOffset*0.9,fireEyePosY+eyeOffset*0.1)
+  line(fireEyePosX+0.9*eyeOffset,fireEyePosY,fireEyePosX+eyeOffset*1.1,fireEyePosY+eyeOffset*0.2)
+  line(fireEyePosX+eyeOffset*1.1,fireEyePosY+eyeOffset*0.2,fireEyePosX+eyeOffset*0.9,fireEyePosY+eyeOffset*0.3)
   //mouth
-
+  line(fireEyePosX+0.3*eyeOffset,fireEyePosY+eyeOffset*0.8,fireEyePosX+0.8*eyeOffset,fireEyePosY+eyeOffset*0.8)
+  pop()
   }
-
-
   //shy
   if(k===2){
+  push()
   noStroke()
-  fill(0)  
-  ellipse(fireEyePosX,fireEyePosY,eyeSize,eyeSize*1.2)
-  ellipse(fireEyePosX+eyeOffset,fireEyePosY,eyeSize,eyeSize*1.2)
-  stroke(235, 171, 211,120)
-  strokeWeight(2)
+  fill(0,160)  
+  ellipse(fireEyePosX+0.2*eyeOffset,fireEyePosY,eyeSize,eyeSize)
+  ellipse(fireEyePosX+eyeOffset,fireEyePosY,eyeSize,eyeSize)
+  stroke(247, 126, 201,120)
+  strokeWeight(4)
   noFill()
   beginShape()
-  vertex(fireEyePosX-2*eyeSize,fireEyePosY+8*eyeSize)
-  vertex(fireEyePosX-eyeSize,fireEyePosY+10*eyeSize)
-  vertex(fireEyePosX,fireEyePosY+8*eyeSize)
-  vertex(fireEyePosX+eyeSize,fireEyePosY+10*eyeSize)
-  vertex(fireEyePosX+2*eyeSize,fireEyePosY+8*eyeSize)
+  vertex(fireEyePosX-0.1*eyeOffset,fireEyePosY+0.4*eyeOffset)
+  vertex(fireEyePosX,fireEyePosY+0.3*eyeOffset)
+  vertex(fireEyePosX+0.1*eyeOffset,fireEyePosY+0.4*eyeOffset)
+  vertex(fireEyePosX+0.2*eyeOffset,fireEyePosY+0.3*eyeOffset)
+  vertex(fireEyePosX+0.3*eyeOffset,fireEyePosY+0.4*eyeOffset)
+  vertex(fireEyePosX+0.4*eyeOffset,fireEyePosY+0.3*eyeOffset)
+  vertex(fireEyePosX+0.5*eyeOffset,fireEyePosY+0.4*eyeOffset)
   endShape()
-
-
+  beginShape()
+  vertex(fireEyePosX+0.7*eyeOffset,fireEyePosY+0.4*eyeOffset)
+  vertex(fireEyePosX+0.8*eyeOffset,fireEyePosY+0.3*eyeOffset)
+  vertex(fireEyePosX+0.9*eyeOffset,fireEyePosY+0.4*eyeOffset)
+  vertex(fireEyePosX+1*eyeOffset,fireEyePosY+0.3*eyeOffset)
+  vertex(fireEyePosX+1.1*eyeOffset,fireEyePosY+0.4*eyeOffset)
+  vertex(fireEyePosX+1.2*eyeOffset,fireEyePosY+0.3*eyeOffset)
+  vertex(fireEyePosX+1.3*eyeOffset,fireEyePosY+0.4*eyeOffset)
+  endShape()
+  pop()
   }
-
-
   //love, background hearts coming out
   if(k===3){
-
+    push()
+    stroke(250, 130, 226)
+    strokeWeight(6)
+    noFill()
+    push()
+    translate(fireEyePosX+0.1*eyeOffset,fireEyePosY+0.2*eyeOffset)
+    beginShape()
+    vertex(0,-eyeSize*0.8);
+    bezierVertex(eyeSize,-eyeSize*1.5,eyeSize*1.5,0,0,eyeSize*1.2)
+    bezierVertex(-eyeSize * 1.5, 0,-eyeSize, -eyeSize * 1.5,0, -eyeSize * 0.8);
+    endShape(CLOSE)
+    pop()
+    push()
+    translate(fireEyePosX+eyeOffset,fireEyePosY+0.2*eyeOffset)
+    beginShape()
+    vertex(0,-eyeSize*0.8);
+    bezierVertex(eyeSize,-eyeSize*1.5,eyeSize*1.5,0,0,eyeSize*1.2)
+    bezierVertex(-eyeSize * 1.5, 0,-eyeSize, -eyeSize * 1.5,0, -eyeSize * 0.8);
+    endShape(CLOSE);
+    pop();
+    pop()
   }
-  //angry
-  if(k===4){
+  // angry
+  if (k===4){
+  push()
+  noFill()
+  stroke(0)
+  strokeWeight(6)
+  // left eye
+  line(fireEyePosX+eyeOffset*0.1,fireEyePosY-0.3*eyeOffset,fireEyePosX+0.5*eyeOffset,fireEyePosY-0.1*eyeOffset)
+  beginShape();
+  vertex(fireEyePosX, fireEyePosY-0.18*eyeOffset)
+  vertex(fireEyePosX + eyeOffset/2, fireEyePosY*1.1) 
+  vertex(fireEyePosX + eyeSize * 0.8, fireEyePosY*1.2) 
+  endShape(CLOSE);
+  
+  // right eye
+  line(fireEyePosX+eyeOffset*1.2,fireEyePosY-0.3*eyeOffset,fireEyePosX+0.8*eyeOffset,fireEyePosY-0.1*eyeOffset)
 
-  }
+  beginShape()
+  vertex(fireEyePosX + eyeOffset*1.3, fireEyePosY - 0.18*eyeOffset)
+  vertex(fireEyePosX + eyeOffset*0.8, fireEyePosY*1.1)
+  vertex(fireEyePosX + eyeOffset*1.1, fireEyePosY*1.2)
+  endShape(CLOSE);
+  //mouth
+  beginShape()
+  vertex(fireEyePosX+0.45*eyeOffset,fireEyePosY*1.5)
+  vertex(fireEyePosX+0.55*eyeOffset,fireEyePosY*1.3)
+  vertex(fireEyePosX+0.65*eyeOffset,fireEyePosY*1.4)
+  vertex(fireEyePosX+0.75*eyeOffset,fireEyePosY*1.3)
+  vertex(fireEyePosX+0.9*eyeOffset,fireEyePosY*1.5)
+  endShape(CLOSE)
+  pop()
+}
 
 }
 function drawBackStars(lipsHeight){
+  push()
   background(0,120)
   //first run
   if (firstRun){
@@ -446,17 +523,63 @@ function drawBackStars(lipsHeight){
   noStroke();
   fill(255);
   ellipse(sx, sy, r, r);
+  pop()
 }
 }
-function drawBackHearts(){
+function drawBackHearts(lipsWidth){
 
+background(250, 202, 245,90)
+  push()
+    colorMode(HSB)
+if(firstRunHearts){
+  for(let i=0;i<numHearts;i++){
+  
+    hearts.push({
+      x:random(-midx,midx),
+      y:random(-midy,midy),
+      z:random(2*midx),
+      color:color(random(310,340),random(50,80),100),
+      size:random(10,25),
+    
+    })
+  }
+  firstRunHearts=false
+}
+pop()
+push()
+translate(midx,midy)
+let speed=map(lipsWidth,160,120,2,8)
+for(let heart of hearts){
+  heart.z-=speed
+  if(heart.z<1){
+    heart.x=random(-midx,midx)
+    heart.y=random(-midy,midy)
+    heart.z=random(2*midx)
+  }
+  let sx=heart.x*(midx*2/heart.z)
+  let sy=heart.y*(midx*2/heart.z)
+  let r=map(heart.z,0,midx*2,heart.size,heart.size*0.2)
+  push()
+  translate(sx,sy)
+  scale(r/20)
+  noStroke()
+  fill(heart.color)
+  beginShape()
+  vertex(0,-8)
+  bezierVertex(-10,-20,-20,0,0,10)
+  bezierVertex(20,0,10,-20,0,-8)
+  endShape(CLOSE)
+  pop() 
+}
+pop()
 }
 function drawFireworks(){
+  
   if (random(1)<0.05&&fireworks.length<6){
     fireworks.push({
-      x:random(midx*0.4,mid*1.6),
+      x:random(midx*0.4,midx*1.6),
       y:midy*2,
-      vy:random(-8,-12),
+      vy:random(-12,-8),
       color:random(myColors),
       exploded:false,
       size:random(40,60),
@@ -469,9 +592,9 @@ function drawFireworks(){
       fw.y+=fw.vy
       fw.vy+=gravity*0.5
       drawFlyingFire(fw.x,fw.y,fw.color)
-    if(fw.vy>0||fw.y<350){
-      fw.exploaded=true
-      fw.particles=createHeartExplosion(fw.x,fw.y,fw.color)
+    if(fw.vy>=0||fw.y<midy){
+      fw.exploded=true
+      fw.particles=createExplosion(fw.x,fw.y,fw.color)
     }  
     }else{
       for(let p of fw.particles){
@@ -486,7 +609,7 @@ function drawFireworks(){
       fw.particles=fw.particles.filter(p=>p.life>0)
     }
   }
-  fireworks=fireworks.filter(fw=>!fwparticles.length>0)
+  fireworks=fireworks.filter(fw => !fw.exploded || fw.particles.length>0)
 }
 function drawFlyingFire(x,y,col){
   push();
@@ -498,27 +621,52 @@ function drawFlyingFire(x,y,col){
   ellipse(0, 10, 4, 10);
   pop();
 }
-function createHeartExplosion(x,y,col){
+function createExplosion(x,y,col){
   let particles = [];
-  let count = 120;
+  let count = 500;
   for (let i = 0; i < count; i++) {
-    let t = map(i, 0, count, 0, TWO_PI);
-    let heartX = 16 * pow(sin(t), 3);
-    let heartY = -(13 * cos(t) - 5 * cos(2*t) - 2 * cos(3*t) - cos(4*t));
-    let scale = random(3, 5);
+    push()
+    angleMode(DEGREES)
+    let angle = (i/count)*360
+    //let heartX = 16 * pow(sin(t), 3);
+    //let heartY = -(13 * cos(t) - 5 * cos(2*t) - 2 * cos(3*t) - cos(4*t));
+    //let scale = random(2, 5);
+    let speed=random(2,8)
+    let vx=cos(angle)*speed
+    let vy=sin(angle)*speed
     particles.push({
       x: x,
       y: y,
-      vx: heartX * 0.3 * random(0.8, 1.2),
-      vy: heartY * 0.3 * random(0.8, 1.2),
-      size: random(2, 5),
+      // vx: heartX * 0.3 * random(0.8, 1.2)*scale*0.1,
+      vx:vx,
+      //vy: heartY * 0.3 * random(0.8, 1.2)*scale*0.1,
+      vy:vy,
+      size: random(4, 8),
       color: col,
-      life: 255
+      life: 255,
+      decay:random(2,4)
     })
+    pop()
 }
 return particles
 }
-  
+function drawLines(x,y,length){
+  push()
+  angleMode(DEGREES)
+  translate(x,y)
+  stroke(random(myColors))
+  strokeWeight(6)
+  noFill()
+  line(0,0,length,0)
+  rotate(-15)
+  line(0,0,length,0)
+  rotate(30)
+  line(0,0,length,0)
+  rotate(15)
+
+
+  pop()
+}  
   
 
 
