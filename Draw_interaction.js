@@ -9,7 +9,8 @@ let midy=CaptureHeight/2
 let gravity=0.25
 let numHearts=300
 let firstRunHearts=true
-
+let lastGesture=null //reference from GPT,to keep the emoji more stable
+let gestureTimer=0
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
 }
@@ -90,7 +91,14 @@ if(RH){
   R_ringFingerMcpX = RH.ring_finger_mcp.x;
   R_ringFingerMcpY = RH.ring_finger_mcp.y;
 }
+
    let whatGesture = detectHandGesture(hand)
+   if (whatGesture===lastGesture){
+    gestureTimer++
+   } else{
+    gestureTimer=0
+    lastGesture=whatGesture
+   }
    fireSize=map(dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY),0,1000,50,800)
    let handMidX=L_middleFingerMcpX+dist(L_middleFingerMcpX,L_middleFingerMcpY,R_middleFingerMcpX,R_middleFingerMcpY)/2
    let eyeOffset=0.4*fireSize
@@ -102,6 +110,7 @@ if(RH){
   let indexTouch=areTheseTouching(L_middleFingerTipX,L_middleFingerTipY,R_middleFingerTipX,R_middleFingerTipY,50)
   let thumbIndexTouchLeft=areTheseTouching(L_middleFingerTipX,L_middleFingerTipY,L_thumbTipX,L_thumbTipY)
   let thumbIndexTouchRight=areTheseTouching(R_middleFingerTipX,R_middleFingerTipY,R_thumbTipX,R_thumbTipY)
+if(gestureTimer>3){  
   if (indexTouch){
     drawLightning(L_indexFingerMcpX,R_indexFingerMcpX,L_indexFingerMcpY,220, random(0,80), 90)
     drawLightning(L_middleFingerMcpX,R_middleFingerMcpX,R_middleFingerMcpY,60, random(0,40), 100)
@@ -112,7 +121,7 @@ if(RH){
     drawLightning(L_ringFingerTipX,R_ringFingerTipX,R_ringFingerTipY,190, random(0,40), 100)
     drawLightning(L_pinkyTipX,R_pinkyTipX,R_pinkyTipY,180, random(0,50), 90)
   }
-  
+
   else if (whatGesture == "Fist"){
 
     drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(82, 180, 222,100),color(158, 209, 247,100))//blue
@@ -124,11 +133,11 @@ if(RH){
     drawFireEmo(1,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
     drawRains(1000)
   }
-  else if (whatGesture=="Thumbs Up"){
+  else if (whatGesture=="Thumbs Up"&&gestureTimer>3){
     drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(245, 86, 7,100),color(247, 243, 104,100))//red
-    drawFireEmo(2,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
+    drawFireEmo(2,fireEyePosX,fireEyePosY,eyeOffset,eyeSize*0.8,mouthSize)
   }
-  else if (whatGesture=="Open Palm"){
+  else if (whatGesture=="Open Palm"&&gestureTimer>3){
     drawFire(handMidX,R_middleFingerMcpY+100,fireSize,color(247, 104, 180,100),color(247, 114, 223,100))//red pink
     drawFireEmo(3,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
   } 
@@ -147,7 +156,7 @@ if(RH){
   drawFireEmo(0,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize)
    
   pop()  
- }
+ }}
  }}
 
     /*
@@ -209,7 +218,7 @@ if(RH){
     //right eye
     //drawFlowers(rightEyeCenterX,rightEyeCenterY,50,map(rightEyeHeight,5,19,4,12))
     //background
-    if (lipsHeight>50){
+    if (lipsHeight>65){
       drawBackStars(lipsHeight)
     }
     if(leftEyeHeight<20||rightEyeHeight<20){
@@ -411,8 +420,8 @@ function drawFireEmo(k,fireEyePosX,fireEyePosY,eyeOffset,eyeSize,mouthSize){
   fill(0,160)  
   ellipse(fireEyePosX+0.2*eyeOffset,fireEyePosY,eyeSize,eyeSize)
   ellipse(fireEyePosX+eyeOffset,fireEyePosY,eyeSize,eyeSize)
-  stroke(247, 126, 201,120)
-  strokeWeight(4)
+  stroke(247, 126, 201,180)
+  strokeWeight(10)
   noFill()
   beginShape()
   vertex(fireEyePosX-0.1*eyeOffset,fireEyePosY+0.4*eyeOffset)
