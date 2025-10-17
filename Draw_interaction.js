@@ -71,6 +71,8 @@ if(LH){
   L_indexFingerMcpY = LH.index_finger_mcp.y;
   L_ringFingerMcpX = LH.ring_finger_mcp.x;
   L_ringFingerMcpY = LH.ring_finger_mcp.y;
+
+
 }
 //set up right hand variables
 if(RH){
@@ -108,8 +110,8 @@ if(RH){
    let mouthSize=map(fireSize,50,800,10,100)
   if(LH && RH){
   let indexTouch=areTheseTouching(L_middleFingerTipX,L_middleFingerTipY,R_middleFingerTipX,R_middleFingerTipY,50)
-  let thumbIndexTouchLeft=areTheseTouching(L_middleFingerTipX,L_middleFingerTipY,L_thumbTipX,L_thumbTipY)
-  let thumbIndexTouchRight=areTheseTouching(R_middleFingerTipX,R_middleFingerTipY,R_thumbTipX,R_thumbTipY)
+  let thumbIndexTouchLeft=areTheseTouching(L_middleFingerTipX,L_middleFingerTipY,L_thumbTipX,L_thumbTipY,50)
+  let thumbIndexTouchRight=areTheseTouching(R_middleFingerTipX,R_middleFingerTipY,R_thumbTipX,R_thumbTipY,50)
 if(gestureTimer>3){  
   if (indexTouch){
     drawLightning(L_indexFingerMcpX,R_indexFingerMcpX,L_indexFingerMcpY,220, random(0,80), 90)
